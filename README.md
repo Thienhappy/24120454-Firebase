@@ -74,7 +74,6 @@ pip install fastapi uvicorn pydantic[email]
 
 **1. Start the FastAPI Backend:**
 ```bash
-cd backend
 uvicorn backend.app.main:app --reload --port 8000
 ```
 The API will be available at `http://localhost:8000`. You can view the API documentation at `http://localhost:8000/docs`.
@@ -82,7 +81,6 @@ The API will be available at `http://localhost:8000`. You can view the API docum
 **2. Start the Streamlit Frontend:**
 Open a new terminal, activate your virtual environment, and run:
 ```bash
-cd frontend
 streamlit run frontend/app.py
 ```
 The Streamlit interface will open in your browser, typically at `http://localhost:8501`.
