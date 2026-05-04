@@ -1,6 +1,7 @@
 📝 Firebase & AI Note-Taking App
 
-Dự án thực hành Lab 2: Application Programming Interface and Firebase Studio 
+Dự án thực hành Lab 2: Application Programming Interface and Firebase Studio
+
 Sinh viên thực hiện: Huỳnh Trần Phước Thiện  
 MSSV: 24120454  
 Giảng viên hướng dẫn: Lê Đức Khoan  
