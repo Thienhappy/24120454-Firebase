@@ -86,6 +86,7 @@ streamlit run frontend/app.py
 The Streamlit interface will open in your browser, typically at `http://localhost:8501`.
 
 ## 🎥 Video Demo
+https://drive.google.com/drive/folders/1eRINZEdt83eh2dPKnlfVW6dogOqpI8nW?usp=drive_link
 
 
 
