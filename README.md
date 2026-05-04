@@ -62,15 +62,78 @@ source venv/bin/activate
 3. **Install Dependencies:**
 ```bash
 pip install -r requirements.txt
-pip install fastapi uvicorn pydantic[email]
+pip install fastapi 
+pip install uvicorn 
+pip install pydantic[email]
 
 ```
 
-4. **Environment Variables & Firebase Setup:**
-* Please rename `.env.example` to `.env` and fill in your Gemini API key before running the application.
+4. **Firebase Setup (Console):**
 * Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/).
-* Enable Authentication, Firestore and Realtime Database.
-* Download your Firebase Admin SDK service account key (`.json` file) and configure the path in your `backend` configurations.
+* Enable Authentication (e.g., Email/Password, Google).
+* Enable Firestore Database and Realtime Database.
+
+
+5. **Credentials & Secrets Setup:**
+* **Environment Variables:** 
+    Rename `.env.example` to `.env` and fill in your Gemini API key before running the application.
+
+* **Firebase Admin SDK Setup (Backend):**
+    1. Go to your [Firebase Console](https://console.firebase.google.com/) > **Project settings** > **Service accounts**.
+    2. Click **Generate new private key** to download the `.json` file.
+    3. **Note:** You only need this file to copy its content. You can delete it after completing the Streamlit setup below.
+
+* **Google OAuth 2.0 Setup (For Google Login):**
+    1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and select the project that was automatically created when you made your Firebase project.
+    2. Navigate to **APIs & Services** > **Credentials**.
+    3. Click **+ CREATE CREDENTIALS** and select **OAuth client ID**.
+    4. Choose **Web application** as the Application type.
+    5. Under **Authorized redirect URIs**, add exactly this URL: `http://localhost:8000/auth/google/callback`
+    6. Click **Create**. A popup will appear containing your **Client ID** and **Client Secret**. Keep this tab open for the next step.
+
+* **Streamlit Secrets Setup (Frontend):**
+    1. Create a `.streamlit` directory and a `secrets.toml` file in the root of your project:
+       ```bash
+       mkdir .streamlit
+       touch .streamlit/secrets.toml
+       ```
+    2. Add the following content to `secrets.toml` and fill in the necessary Firebase and Google Login credentials:
+       ```toml
+       [firebase_client]
+            # You can find this in Firebase Console > Project settings > General > Your apps > Web app configuration
+            # apiKey = "..."
+            # authDomain = "..."
+            # databaseURL = "..."
+            # projectId = "..."
+            # storageBucket = "..."
+            # messagingSenderId = "..."
+            # appId = "..."
+
+       [firebase_admin]
+            # Extract the values from your downloaded Service Account .json file
+            # type = "service_account"
+            # project_id = "your-project-id"
+            # private_key_id = "..."
+            # private_key = "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+            # client_email = "..."
+            # client_id = "..."
+            # auth_uri = "https://..."
+            # token_uri = "https://..."
+            # auth_provider_x509_cert_url = "https://..."
+            # client_x509_cert_url = "..."
+
+       [google-login]
+            # Fill in the Google OAuth 2.0 credentials you obtained from the Google Cloud Console
+            # google-url = "http://localhost:8000/auth/google/start"
+            # google_client_id = "..." 
+            # google_client_secret = "..."
+            # google_redirect_uri = "http://localhost:8000/auth/google/callback"
+            # firebase_web_api_key = "..."
+            # frontend_url = "http://localhost:8501"
+            # cookie_secure = false
+       ```
+* **⚠️ IMPORTANT SECURITY NOTE:** Never commit your `.env`, `firebase-credentials.json`, or `.streamlit/secrets.toml` files to version control. Make sure all of them are added to your `.gitignore` file to protect your sensitive credentials.
+
 
 ## ▶️ Running the Application
 
