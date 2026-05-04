@@ -1,18 +1,19 @@
 import streamlit as st
-from collections import deque
 import requests
 
-from api_client import signup, login, google_login, get_messages, send_chat
+from api_client import (
+    signup, login, google_login, 
+    create_note, get_notes, update_note, delete_note, 
+    summarize_all_notes, summarize_single_note
+)
 
-st.set_page_config(page_title="Mika Frontend", page_icon="💬")
-
-WELCOME = {"role": "assistant", "content": "Xin chào 👋! Tôi là Mika. Tôi có thể giúp gì cho bạn?"}
+st.set_page_config(page_title="Simple Notes", page_icon="📝")
 
 if "user" not in st.session_state:
     st.session_state.user = None
 
-if "messages" not in st.session_state:
-    st.session_state.messages = deque([WELCOME], maxlen=8)
+if "notes" not in st.session_state:
+    st.session_state.notes = []
 
 if "show_signup" not in st.session_state:
     st.session_state.show_signup = False
@@ -25,10 +26,11 @@ def load_history():
     if not st.session_state.user:
         return
     try:
-        msgs = get_messages(st.session_state.user["idToken"], limit=8)
-        st.session_state.messages = deque(msgs, maxlen=8)
+        # Load lịch sử ghi chú thay cho chat
+        notes = get_notes(st.session_state.user["idToken"])
+        st.session_state.notes = notes
     except Exception:
-        st.session_state.messages = deque([WELCOME], maxlen=8)
+        st.session_state.notes = []
 
 
 def clear_google_query_params():
@@ -150,13 +152,13 @@ def signup_form():
 
 handle_google_login_callback()
 
-st.title("Mika Chat")
+st.title("Simple Notes 📝")
 
 if st.session_state.user:
     st.success(f"Đang đăng nhập: {st.session_state.user['email']}")
     if st.button("Đăng xuất"):
         st.session_state.user = None
-        st.session_state.messages = deque([WELCOME], maxlen=8)
+        st.session_state.notes = []
         clear_google_query_params()
         st.rerun()
 else:
@@ -168,21 +170,50 @@ else:
 st.divider()
 
 if st.session_state.user:
-    for msg in list(st.session_state.messages):
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+    st.subheader("🤖 AI Tóm tắt")
+    if st.button("Tóm tắt tất cả ghi chú"):
+        with st.spinner("Đang nhờ AI tóm tắt..."):
+            try:
+                res = summarize_all_notes(st.session_state.user["idToken"])
+                st.info(res.get("summary", "Không có dữ liệu"))
+            except Exception as e:
+                st.error(f"Lỗi AI: {e}")
+                
+    st.divider()
+    st.subheader("📚 Danh sách Ghi chú")
+    
+    if not st.session_state.notes:
+        st.write("Bạn chưa có ghi chú nào.")
+        
+    for note in list(st.session_state.notes):
+        with st.expander(note["title"]):
+            st.write(note["content"])
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                if st.button("Xóa", key=f"del_{note['id']}"):
+                    delete_note(st.session_state.user["idToken"], note["id"])
+                    load_history()
+                    st.rerun()
+            with col2:
+                if st.button("Tóm tắt", key=f"sum_{note['id']}"):
+                    with st.spinner("AI đang tóm tắt ghi chú này..."):
+                        try:
+                            res = summarize_single_note(st.session_state.user["idToken"], note["id"])
+                            st.info(res.get("summary", ""))
+                        except Exception as e:
+                            st.error(f"Lỗi: {e}")
 
-    prompt = st.chat_input("Nhập tin nhắn...")
-    if prompt:
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        try:
-            res = send_chat(st.session_state.user["idToken"], prompt)
-            reply = res["reply"]
-        except Exception as e:
-            reply = f"Lỗi backend: {e}"
-
-        st.session_state.messages.append({"role": "assistant", "content": reply})
-        st.rerun()
+    st.divider()
+    st.subheader("✍️ Tạo ghi chú mới")
+    note_name = st.text_input("Tiêu đề")
+    note_content = st.text_area("Nội dung...", height=200)
+    if note_name and note_content:
+        if st.button("Tạo ghi chú"):
+            try:
+                create_note(st.session_state.user["idToken"], note_name, note_content)
+                st.success("Tạo thành công!")
+                load_history()  # Load lại list sau khi tạo
+                st.rerun()
+            except Exception as e:
+                st.error(f"Lỗi khi tạo ghi chú: {e}")

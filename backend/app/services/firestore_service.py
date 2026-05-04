@@ -4,19 +4,21 @@ from firebase_admin import firestore
 
 db = get_firestore()
 
-def save_message(uid: str, role: str, content: str):
+def save_note(uid: str, title: str, content: str):
     doc = {
-        "role": role,
+        "title": title,
         "content": content,
         "ts": datetime.now(timezone.utc)
     }
-    db.collection("chats").document(uid).collection("messages").add(doc)
+    _, doc_ref = db.collection("notes").document(uid).collection("user_notes").add(doc)
+    doc["id"] = doc_ref.id
+    return doc
 
-def load_last_messages(uid: str, limit: int = 8):
+def load_notes(uid: str, limit: int = 20):
     q = (
-        db.collection("chats")
+        db.collection("notes")
         .document(uid)
-        .collection("messages")
+        .collection("user_notes")
         .order_by("ts", direction=firestore.Query.DESCENDING)
         .limit(limit)
     )
@@ -26,8 +28,23 @@ def load_last_messages(uid: str, limit: int = 8):
 
     return [
         {
-            "role": d.to_dict().get("role", "assistant"),
+            "id": d.id,
+            "title": d.to_dict().get("title", ""),
             "content": d.to_dict().get("content", "")
         }
         for d in docs
     ]
+
+def update_note_in_db(uid: str, note_id: str, title: str, content: str):
+    doc_ref = db.collection("notes").document(uid).collection("user_notes").document(note_id)
+    doc_ref.update({
+        "title": title,
+        "content": content,
+        "ts": datetime.now(timezone.utc)
+    })
+    return {"id": note_id, "title": title, "content": content}
+
+def delete_note_in_db(uid: str, note_id: str):
+    db.collection("notes").document(uid).collection("user_notes").document(note_id).delete()
+
+

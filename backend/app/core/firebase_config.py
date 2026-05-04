@@ -7,7 +7,16 @@ import streamlit as st
 from firebase_admin import credentials, firestore
 
 def get_pyrebase_auth():
-    firebase_cfg = st.secrets["firebase_client"]
+    # Streamlit secrets sometimes has issues with keys, ensure explicit dict and casing
+    firebase_cfg = {
+        "apiKey": st.secrets["firebase_client"]["apiKey"],
+        "authDomain": st.secrets["firebase_client"]["authDomain"],
+        "projectId": st.secrets["firebase_client"]["projectId"],
+        "storageBucket": st.secrets["firebase_client"]["storageBucket"],
+        "messagingSenderId": st.secrets["firebase_client"]["messagingSenderId"],
+        "appId": st.secrets["firebase_client"]["appId"],
+        "databaseURL": st.secrets["firebase_client"]["databaseURL"]
+    }
     firebase_app = pyrebase.initialize_app(firebase_cfg)
     return firebase_app.auth()
 
