@@ -1,6 +1,10 @@
-# MSSV: 24120454
-# Họ và tên: Huỳnh Trần Phước Thiện
-# Project: Firebase & AI Note-Taking App
+📝 Firebase & AI Note-Taking App
+
+Dự án thực hành Lab 2: Application Programming Interface and Firebase Studio 
+Sinh viên thực hiện: Huỳnh Trần Phước Thiện  
+MSSV: 24120454  
+Giảng viên hướng dẫn: Lê Đức Khoan  
+Trường: Đại học Khoa học Tự nhiên - ĐHQG TP.HCM (HCMUS)
 
 A comprehensive note-taking application built with **FastAPI** (Backend) and **Streamlit** (Frontend), featuring **Firebase Authentication**, **Firestore** database integration, and AI capabilities powered by **AI Services**.
 
