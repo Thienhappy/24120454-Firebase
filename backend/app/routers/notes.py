@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from backend.app.dependencies.auth import get_current_user
 from backend.app.schemas.notes import NoteCreate, NoteUpdate
 from backend.app.services.firestore_service import save_note, load_notes, update_note_in_db, delete_note_in_db
-from backend.app.services.ollama_service import summarize_notes
+from backend.app.services.ai_service import summarize_notes
 
 router = APIRouter(prefix="/notes", tags=["notes"])
 @router.post("")

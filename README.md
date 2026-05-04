@@ -1,12 +1,14 @@
-# Firebase & Ollama Note-Taking App
+# MSSV: 24120454
+# Họ và tên: Huỳnh Trần Phước Thiện
+# Project: Firebase & AI Note-Taking App
 
-A comprehensive note-taking application built with **FastAPI** (Backend) and **Streamlit** (Frontend), featuring **Firebase Authentication**, **Firestore** database integration, and AI capabilities powered by **Ollama**.
+A comprehensive note-taking application built with **FastAPI** (Backend) and **Streamlit** (Frontend), featuring **Firebase Authentication**, **Firestore** database integration, and AI capabilities powered by **AI Services**.
 
 ## 🚀 Features
 
 * **User Authentication**: Secure login and signup system powered by Firebase Auth.
 * **Note Management (CRUD)**: Create, read, update, and delete notes stored in Firebase Firestore.
-* **AI Integration**: Enhance your notes with AI using Ollama.
+* **AI Integration**: Enhance your notes with AI Services.
 * **Two-Tier Architecture**: Clean separation of concerns with a FastAPI backend and a Streamlit frontend.
 * **RESTful API**: Comprehensive API endpoints for authentication and note management.
 
@@ -16,7 +18,7 @@ A comprehensive note-taking application built with **FastAPI** (Backend) and **S
 * Python 3.x
 * FastAPI
 * Firebase Admin SDK (Auth & Firestore)
-* Ollama (AI Services)
+* AI Services (e.g., Google GenAI)
 
 **Frontend:**
 * Streamlit
@@ -31,7 +33,7 @@ A comprehensive note-taking application built with **FastAPI** (Backend) and **S
 │       ├── dependencies/  # FastAPI Dependencies (e.g., Auth)
 │       ├── routers/       # API Routes (Auth, Notes)
 │       ├── schemas/       # Pydantic Models for Data Validation
-│       ├── services/      # Business Logic (Firestore, Ollama)
+│       ├── services/      # Business Logic (Firestore, AI Services)
 │       └── main.py        # FastAPI Application Entry Point
 ├── frontend/
 │   ├── app.py             # Streamlit Application
