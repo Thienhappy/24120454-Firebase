@@ -50,7 +50,6 @@ cd <your-repo-directory>
 
 2. **Set up a Virtual Environment (Recommended):**
 ```bash
-python -m 
 python -m venv venv
 # On Windows
 venv\Scripts\activate
@@ -66,10 +65,10 @@ pip install fastapi uvicorn pydantic[email]
 ```
 
 4. **Environment Variables & Firebase Setup:**
+* Please rename `.env.example` to `.env` and fill in your Gemini API key before running the application.
 * Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/).
 * Enable Authentication, Firestore and Realtime Database.
 * Download your Firebase Admin SDK service account key (`.json` file) and configure the path in your `backend` configurations.
-* Ensure Ollama is installed and running locally on your machine.
 
 ## ▶️ Running the Application
 
