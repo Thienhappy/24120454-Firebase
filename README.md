@@ -62,8 +62,6 @@ source venv/bin/activate
 3. **Install Dependencies:**
 ```bash
 pip install -r requirements.txt
-pip install fastapi 
-pip install uvicorn 
 pip install pydantic[email]
 
 ```
