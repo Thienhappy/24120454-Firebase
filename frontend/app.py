@@ -187,22 +187,51 @@ if st.session_state.user:
         
     for note in list(st.session_state.notes):
         with st.expander(note["title"]):
-            st.write(note["content"])
             
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                if st.button("Xóa", key=f"del_{note['id']}"):
-                    delete_note(st.session_state.user["idToken"], note["id"])
-                    load_history()
-                    st.rerun()
-            with col2:
-                if st.button("Tóm tắt", key=f"sum_{note['id']}"):
-                    with st.spinner("AI đang tóm tắt ghi chú này..."):
+            # --- CHỈNH SỬA STATE ---
+            if f"editing_{note['id']}" not in st.session_state:
+                st.session_state[f"editing_{note['id']}"] = False
+                
+            if st.session_state[f"editing_{note['id']}"]:
+                new_title = st.text_input("Tiêu đề", value=note["title"], key=f"title_{note['id']}")
+                new_content = st.text_area("Nội dung", value=note["content"], key=f"content_{note['id']}")
+                
+                col_save, col_cancel = st.columns(2)
+                with col_save:
+                    if st.button("Lưu thay đổi", key=f"save_{note['id']}"):
                         try:
-                            res = summarize_single_note(st.session_state.user["idToken"], note["id"])
-                            st.info(res.get("summary", ""))
+                            update_note(st.session_state.user["idToken"], note["id"], new_title, new_content)
+                            st.session_state[f"editing_{note['id']}"] = False
+                            load_history()
+                            st.rerun()
                         except Exception as e:
                             st.error(f"Lỗi: {e}")
+                with col_cancel:
+                    if st.button("Hủy", key=f"cancel_{note['id']}"):
+                        st.session_state[f"editing_{note['id']}"] = False
+                        st.rerun()
+                        
+            else:
+                st.write(note["content"])
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    if st.button("Xóa", key=f"del_{note['id']}"):
+                        delete_note(st.session_state.user["idToken"], note["id"])
+                        load_history()
+                        st.rerun()
+                with col2:
+                    if st.button("Tóm tắt", key=f"sum_{note['id']}"):
+                        with st.spinner("AI đang tóm tắt ghi chú này..."):
+                            try:
+                                res = summarize_single_note(st.session_state.user["idToken"], note["id"])
+                                st.info(res.get("summary", ""))
+                            except Exception as e:
+                                st.error(f"Lỗi: {e}")
+                with col3:
+                    if st.button("Chỉnh sửa", key=f"edit_{note['id']}"):
+                        st.session_state[f"editing_{note['id']}"] = True
+                        st.rerun()
 
     st.divider()
     st.subheader("✍️ Tạo ghi chú mới")
